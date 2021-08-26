@@ -6,4 +6,5 @@ from django.http import HttpResponse
 
 
 def hello(request):
-    return HttpResponse('Hello World')
+    # return HttpResponse('Hello World')
+    return render(request, 'hello.html', {'numbers': [1, 2, 3, 4]})
