@@ -1,6 +1,12 @@
 from django.db import models
+from django.db.models.fields import related
 
 # Create your models here.
+
+
+class Promotion(models.Model):
+    description = models.CharField(max_length=255)
+    discount = models.FloatField()
 
 
 class Customer(models.Model):
@@ -32,6 +38,8 @@ class Adress(models.Model):
 
 class Collection(models.Model):
     name = models.CharField(max_length=255)
+    featured_prodect = models.TextField(
+        'Product', on_delete=models.SET_NULL, null=True, related_namme='+')
 
 
 class Product(models.Model):
@@ -41,7 +49,8 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=6, decimal_places=2)
     invetory = models.IntegerField()
     last_update = models.DateTimeField(auto_now=True)
-    collection_id = models.ForeignKey(Collection, on_delete=models.PROTECT)
+    collection = models.ForeignKey(Collection, on_delete=models.PROTECT)
+    promotions = models.ManyToManyField(Promotion)
 
 
 class Order(models.Model):
@@ -58,14 +67,14 @@ class Order(models.Model):
     placed_at = models.DateTimeField(auto_now_add=True)
     payment_status = models.CharField(
         max_length=1, choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_PENDING)
-    customer_id = models.ForeignKey(Customer, on_delete=models.PROTECT)
+    customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
 
 
 class OrderItem(models.Model):
     quantity = models.PositiveSmallIntegerField()
     unit_price = models.DecimalField(max_digits=6, decimal_places=2)
-    order_id = models.ForeignKey(Order, on_delete=models.PROTECT)
-    product_id = models.ForeignKey(Product, on_delete=models.PROTECT)
+    order = models.ForeignKey(Order, on_delete=models.PROTECT)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
 
 
 class Cart(models.Model):
@@ -74,5 +83,5 @@ class Cart(models.Model):
 
 class CartItem(models.Model):
     quantity = models.PositiveSmallIntegerField()
-    cart_id = models.ForeignKey(Cart, on_delete=models.CASCADE)
-    product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
