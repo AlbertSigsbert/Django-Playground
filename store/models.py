@@ -32,21 +32,23 @@ class Customer(models.Model):
 class Adress(models.Model):
     street = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
+    zip = models.CharField(max_length=32, null=True)
     customer = models.OneToOneField(
         Customer, on_delete=models.CASCADE, primary_key=True)
 
 
 class Collection(models.Model):
     name = models.CharField(max_length=255)
-    featured_prodect = models.TextField(
-        'Product', on_delete=models.SET_NULL, null=True, related_namme='+')
+    featured_product = models.ForeignKey(
+        'Product', on_delete=models.SET_NULL, null=True, related_name='+')
 
 
 class Product(models.Model):
 
     title = models.CharField(max_length=255)
+    slug = models.SlugField(default='-')
     description = models.TextField()
-    price = models.DecimalField(max_digits=6, decimal_places=2)
+    unit_price = models.DecimalField(max_digits=6, decimal_places=2)
     invetory = models.IntegerField()
     last_update = models.DateTimeField(auto_now=True)
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT)
@@ -59,8 +61,8 @@ class Order(models.Model):
     PAYMENT_STATUS_FAILED = 'F'
 
     PAYMENT_STATUS_CHOICES = [
-        (PAYMENT_STATUS_PENDING, 'Pending')
-        (PAYMENT_STATUS_COMPLETE, 'Complete')
+        (PAYMENT_STATUS_PENDING, 'Pending'),
+        (PAYMENT_STATUS_COMPLETE, 'Complete'),
         (PAYMENT_STATUS_FAILED, 'Failed')
     ]
 
